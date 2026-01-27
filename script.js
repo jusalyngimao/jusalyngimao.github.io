@@ -1,19 +1,64 @@
-<script>
-    document.querySelectorAll('.zoomable').forEach(img => {
+// ==========================================
+// Dynamic Age Calculator
+// ==========================================
+function calculateAge(birthDate) {
+    const today = new Date();
+    const birth = new Date(birthDate);
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
+    
+    // Adjust age if birthday hasn't occurred yet this year
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+        age--;
+    }
+    
+    return age;
+}
+
+// ==========================================
+// Certificate Lightbox Modal
+// ==========================================
+document.addEventListener('DOMContentLoaded', function() {
+    // Update dynamic age
+    const ageElement = document.getElementById('dynamicAge');
+    if (ageElement) {
+        const birthDate = '2004-06-02'; // June 2, 2004
+        const currentAge = calculateAge(birthDate);
+        ageElement.textContent = currentAge;
+    }
+
+    const modal = document.getElementById('certificateModal');
+    const modalImg = document.getElementById('modalImage');
+    const captionText = document.getElementById('caption');
+    const closeBtn = document.querySelector('.modal-close');
+    
+    // Get all certificate images
+    const certificates = document.querySelectorAll('.gallery-item img');
+    
+    certificates.forEach(img => {
         img.addEventListener('click', function() {
-            const zoomOverlay = document.querySelector('.zoom-overlay');
-            const zoomedImage = document.getElementById('zoomedImage');
-            
-            // Set the clicked image as the zoomed image
-            zoomedImage.src = this.src;
-            
-            // Show the zoom overlay
-            zoomOverlay.style.display = 'flex';
+            modal.style.display = 'block';
+            modalImg.src = this.src;
+            captionText.innerHTML = this.alt;
         });
     });
-
-    // Close the zoom overlay when clicked
-    document.querySelector('.close-zoom').addEventListener('click', function() {
-        document.querySelector('.zoom-overlay').style.display = 'none';
+    
+    // Close modal when clicking the X
+    closeBtn.addEventListener('click', function() {
+        modal.style.display = 'none';
     });
-</script>
+    
+    // Close modal when clicking outside the image
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+    
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal.style.display === 'block') {
+            modal.style.display = 'none';
+        }
+    });
+});
