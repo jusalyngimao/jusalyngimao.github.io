@@ -1,5 +1,10 @@
 /*============Glogbal Style================ */
 
+/* Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
 /* Lightbox Close Button - Move to Top */
 .lb-data .lb-close,
 .lightbox .lb-close {
@@ -13,6 +18,7 @@
 html,
 body {
     height: 100%;
+    font-family: 'Wix Madefor Display', sans-serif;
 }
 
 @media (max-width: 768px) {
@@ -21,19 +27,23 @@ body {
     }
 }
 
-
 section {
     min-height: 100vh; 
     overflow: hidden; 
-    scroll-behavior: smooth; 
+    scroll-behavior: smooth;
+    position: relative;
 }
 
+/* Section Animations */
+section:nth-child(even) {
+    background: linear-gradient(to bottom, #ffffff 0%, #f8f9fa 100%);
+}
 
 p {
     font-family: 'Wix Madefor Display', sans-serif;
     font-size: 18px;
-    line-height: 26px;
-    color: #000;
+    line-height: 1.8;
+    color: #333;
     margin: 0;
 }
 
@@ -300,16 +310,23 @@ button:focus {
 ::::::::::::::::::::::::::::::::::::*/
 
 .section-title {
-    margin-bottom: 60px;
+    margin-bottom: 70px;
 }
 
 .section-title h2 {
     text-transform: uppercase;
     position: relative;
-    font-size: 32px;
-    padding-bottom: 15px;
-    margin-bottom: 15px;
-    line-height: 1;
+    font-size: 2.5rem;
+    font-weight: 700;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    line-height: 1.2;
+    letter-spacing: 1px;
+}
+
+.section-title h2 i {
+    color: #448f62;
+    margin-right: 10px;
 }
 
 .section-title h2:before,
@@ -318,15 +335,24 @@ button:focus {
     content: '';
     left: 50%;
     bottom: 0;
-    width: 50px;
-    height: 5px;
-    background-color: #529777;
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(90deg, #5ab47d, #448f62);
+    border-radius: 2px;
 }
 
 .section-title h2:before {
     left: auto;
     right: 50%;
-    background-color: #123f24;
+    background: linear-gradient(90deg, #448f62, #2d5a3d);
+}
+
+.section-title p {
+    font-size: 1.1rem;
+    color: #666;
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.8;
 }
 
 /*::::::::::::::::::::::::::::::::::::
@@ -889,56 +915,146 @@ body {
 #project {
     background-color: #0e3b2c; 
     padding: 60px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Geometric Background Pattern */
+#project::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        linear-gradient(30deg, rgba(68, 143, 98, 0.1) 12%, transparent 12.5%, transparent 87%, rgba(68, 143, 98, 0.1) 87.5%, rgba(68, 143, 98, 0.1)),
+        linear-gradient(150deg, rgba(68, 143, 98, 0.1) 12%, transparent 12.5%, transparent 87%, rgba(68, 143, 98, 0.1) 87.5%, rgba(68, 143, 98, 0.1)),
+        linear-gradient(30deg, rgba(68, 143, 98, 0.1) 12%, transparent 12.5%, transparent 87%, rgba(68, 143, 98, 0.1) 87.5%, rgba(68, 143, 98, 0.1)),
+        linear-gradient(150deg, rgba(68, 143, 98, 0.1) 12%, transparent 12.5%, transparent 87%, rgba(68, 143, 98, 0.1) 87.5%, rgba(68, 143, 98, 0.1)),
+        linear-gradient(60deg, rgba(90, 180, 125, 0.08) 25%, transparent 25.5%, transparent 75%, rgba(90, 180, 125, 0.08) 75%, rgba(90, 180, 125, 0.08)), 
+        linear-gradient(60deg, rgba(90, 180, 125, 0.08) 25%, transparent 25.5%, transparent 75%, rgba(90, 180, 125, 0.08) 75%, rgba(90, 180, 125, 0.08));
+    background-size: 80px 140px;
+    background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
+    z-index: 0;
+    opacity: 0.6;
+}
+
+/* Floating Geometric Shapes */
+#project::after {
+    content: '';
+    position: absolute;
+    top: 10%;
+    right: 5%;
+    width: 200px;
+    height: 200px;
+    background: linear-gradient(45deg, rgba(68, 143, 98, 0.15), rgba(90, 180, 125, 0.1));
+    clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+    animation: float 8s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-20px) rotate(5deg);
+    }
 }
 
 .section__title {
     color: #ffffff; 
-    font-size: 2.5rem; 
-    font-weight: bold;
+    font-size: 2.8rem; 
+    font-weight: 700;
     text-align: center; 
-    margin-bottom: 40px; 
+    margin-bottom: 50px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    position: relative;
+    padding-bottom: 20px;
+    z-index: 1;
+}
+
+.section__title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(90deg, #448f62, #5ab47d);
+    border-radius: 2px;
+}
+
+.section__title i {
+    margin-right: 15px;
+    color: #5ab47d;
 }
 
 .project__card {
-    background-color: #4b9c7f;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
     display: flex;
     flex-direction: column;
     height: 100%;
     border-radius: 20px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); 
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
     overflow: hidden;
-    transition: transform 0.3s; 
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1px solid rgba(68, 143, 98, 0.1);
+}
+
+.project__card:hover {
+    transform: translateY(-15px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(68, 143, 98, 0.25);
+    border-color: #448f62;
 }
 
 .project__link {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 1.5rem;
-    color: #000;
-    transition: transform 0.5s, box-shadow 0.3s;
+    padding: 2rem;
+    color: #333;
+    transition: all 0.3s ease;
     height: 100%;
     border-radius: 20px;
     position: relative;
     text-decoration: none;
-    background-color: #ffffff;
+    background: transparent;
 }
 
-.project__link:hover {
-    transform: translateY(-1rem);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+.project__link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(68, 143, 98, 0.05), transparent);
+    transition: left 0.5s ease;
+}
+
+.project__link:hover::before {
+    left: 100%;
 }
 
 .project__link:hover i {
-    transform: translateX(0.5rem);
+    transform: translateX(0.5rem) rotate(360deg);
 }
 
 .project__title {
-    color: #1e3a28; 
-    margin-bottom: 0.75rem;
+    color: #2d5a3d;
+    margin-bottom: 1rem;
     font-family: 'Planet N Compact', sans-serif;
-    font-size: 1.5rem;
-    font-weight: 700; 
+    font-size: 1.75rem;
+    font-weight: 700;
+    transition: color 0.3s ease;
+}
+
+.project__card:hover .project__title {
+    color: #448f62;
 }
 
 .project_description {
@@ -946,7 +1062,9 @@ body {
     text-align: justify;
     color: #555;
     font-weight: 400;
-    font-size: 1.1rem;
+    font-size: 1rem;
+    line-height: 1.7;
+}
 }
 
 .project__link i {
@@ -961,6 +1079,8 @@ body {
 .project .container {
     max-width: 1500px;
     margin: 0 auto; 
+    position: relative;
+    z-index: 1;
 }
 
 .project__img {
