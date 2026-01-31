@@ -160,17 +160,68 @@ button:focus {
     align-items: center;
     min-height: 100vh;
     padding: 50px 0;
-    background-color: transparent;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Geometric Background Pattern for Contact Section */
+#contact::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        linear-gradient(45deg, rgba(68, 143, 98, 0.05) 25%, transparent 25%),
+        linear-gradient(-45deg, rgba(68, 143, 98, 0.05) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, rgba(90, 180, 125, 0.05) 75%),
+        linear-gradient(-45deg, transparent 75%, rgba(90, 180, 125, 0.05) 75%);
+    background-size: 60px 60px;
+    background-position: 0 0, 0 30px, 30px -30px, -30px 0px;
+    z-index: 0;
+    opacity: 0.7;
+}
+
+/* Floating Geometric Circles */
+#contact::after {
+    content: '';
+    position: absolute;
+    bottom: 10%;
+    left: 10%;
+    width: 150px;
+    height: 150px;
+    background: linear-gradient(135deg, rgba(68, 143, 98, 0.1), rgba(90, 180, 125, 0.15));
+    border-radius: 50%;
+    animation: floatCircle 10s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes floatCircle {
+    0%, 100% {
+        transform: translate(0, 0) scale(1);
+    }
+    33% {
+        transform: translate(20px, -20px) scale(1.1);
+    }
+    66% {
+        transform: translate(-15px, 15px) scale(0.9);
+    }
 }
 
 .section-title h2 {
     font-size: 3.5rem;
     color:  #1f693d;
+    position: relative;
+    z-index: 1;
 }
 
 .section-title p {
     color: #555;
     margin-bottom: 30px;
+    position: relative;
+    z-index: 1;
 }
 
 /* Social Media Icons and Links */
@@ -179,6 +230,8 @@ button:focus {
     justify-content: center;
     gap: 20px; 
     flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
 }
 
 .contact__social-link {
