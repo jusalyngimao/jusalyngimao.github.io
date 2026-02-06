@@ -48,6 +48,68 @@ document.addEventListener('DOMContentLoaded', function() {
         modal.style.display = 'none';
     });
     
+    // ==========================================
+    // Project Gallery Modal
+    // ==========================================
+    const projectModal = document.getElementById('projectModal');
+    const projectTitle = document.getElementById('projectTitle');
+    const projectGallery = document.getElementById('projectGallery');
+    const projectModalClose = document.querySelector('.project-modal-close');
+    
+    // Get all project modal buttons
+    const projectModalBtns = document.querySelectorAll('.project-modal-btn');
+    
+    projectModalBtns.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const projectName = this.getAttribute('data-project');
+            const screenshots = JSON.parse(this.getAttribute('data-screenshots'));
+            
+            projectTitle.textContent = projectName;
+            
+            // Clear previous images
+            projectGallery.innerHTML = '';
+            
+            // Add all images to gallery
+            screenshots.forEach((screenshot, index) => {
+                const img = document.createElement('img');
+                img.src = screenshot;
+                img.alt = `${projectName} screenshot ${index + 1}`;
+                img.className = 'project-gallery-image';
+                projectGallery.appendChild(img);
+            });
+            
+            projectModal.style.display = 'flex';
+        });
+    });
+    
+    // Close project modal
+    if (projectModalClose) {
+        projectModalClose.addEventListener('click', function() {
+            projectModal.style.display = 'none';
+        });
+    }
+    
+    // Close modal when clicking outside
+    projectModal.addEventListener('click', function(e) {
+        if (e.target === projectModal) {
+            projectModal.style.display = 'none';
+        }
+    });
+    
+    // Close with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && projectModal.style.display === 'flex') {
+            projectModal.style.display = 'none';
+        }
+    });
+    
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+    
     // Close modal when clicking outside the image
     modal.addEventListener('click', function(e) {
         if (e.target === modal) {
