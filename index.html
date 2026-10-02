@@ -13,6 +13,7 @@ if ("IntersectionObserver" in window && !matchMedia("(prefers-reduced-motion: re
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Sans:wght@400;500;600;700&family=Caveat:wght@600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <style>
 :root {
   --bg: #f7f1ee; --ink: #20181d; --muted: #645862; --line: #eaded6; --cream: #f7efe9;
@@ -289,11 +290,14 @@ footer { background: var(--dark); color: var(--cream); border-radius: 30px 30px 
 #dg .dg-close:hover, #cv .dg-close:hover { background: var(--terra); border-color: var(--terra); color: #fff; transform: rotate(90deg); }
 #dg .dg-grid, .pj-grid { flex: 1; min-height: 0; overflow-y: auto; display: grid; gap: 22px; align-content: start; padding: 4px 8px 8px 2px; scrollbar-width: thin; scrollbar-color: rgba(241,213,161,.35) transparent; }
 #dg .dg-grid { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
+#dg .dg-grid.two { grid-template-columns: repeat(2, 1fr); }
+@media (max-width: 560px) { #dg .dg-grid.two { grid-template-columns: 1fr; } }
 .pj-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 440px), 1fr)); }
 .dg-empty { color: rgba(234,242,255,.65); padding: 30px 0; text-align: center; }
 #dg .tile .media { border: 1px solid rgba(255,255,255,.1); }
 #dg .tile .cap b { color: var(--cream); }
 #dg .tile .cap span { color: rgba(234,242,255,.6); }
+#dg .dg-grid.two .tile .cap b { text-transform: none; }
 
 /* project cards */
 .pj { display: flex; flex-direction: column; gap: 14px; width: 100%; padding: 12px 12px 18px; text-align: left; cursor: pointer; color: var(--cream); background: rgba(255,255,255,.045); border: 1px solid rgba(234,242,255,.1); border-radius: 26px; transition: transform .25s, background .25s, border-color .25s, box-shadow .25s; }
@@ -422,6 +426,37 @@ footer { background: var(--dark); color: var(--cream); border-radius: 30px 30px 
   .lb-fig.doc { grid-template-columns: 1fr; }
   .lb-fig.doc .lb-media img { max-height: 42vh; }
 }
+
+/* ===== presentation slideshow (PDF.js) ===== */
+.lb-fig.deck { grid-template-columns: minmax(0, 1.7fr) minmax(260px, 1fr); }
+.lb-fig.deck .lb-media { cursor: default; padding: 0; border-width: 3px; background: #0f0a0d; display: flex; flex-direction: column; align-items: stretch; justify-content: center; }
+.deck-stage { position: relative; width: 100%; display: grid; place-items: center; background: #0f0a0d; aspect-ratio: 16/9; }
+.deck-stage canvas, .deck-stage > img { display: block; max-width: 100%; max-height: 100%; width: 100%; height: auto; transition: opacity .25s ease; }
+.deck-stage.loading canvas, .deck-stage.loading > img { opacity: .25; }
+.deck-stage.embed iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #000; }
+.deck-load { position: absolute; inset: 0; display: grid; place-items: center; color: var(--gold); font: 700 12px var(--font-body); letter-spacing: .16em; text-transform: uppercase; pointer-events: none; opacity: 0; transition: opacity .2s; }
+.deck-stage.loading .deck-load { opacity: 1; }
+.deck-err { padding: 28px 24px; text-align: center; color: var(--cream); font-size: 14.5px; line-height: 1.6; display: grid; gap: 14px; justify-items: center; }
+.deck-err b { color: var(--gold); word-break: break-all; }
+.deck-arrow { position: absolute; top: 50%; translate: 0 -50%; z-index: 3; width: 46px; height: 46px; border-radius: 50%; border: 1.5px solid rgba(241,213,161,.4); background: rgba(26,19,24,.8); color: var(--cream); font-size: 24px; cursor: pointer; display: grid; place-items: center; transition: background .2s, transform .2s, opacity .2s; }
+.deck-arrow:hover { background: var(--terra); border-color: var(--terra); }
+.deck-arrow[disabled] { opacity: .25; pointer-events: none; }
+.deck-arrow.prev { left: 12px; } .deck-arrow.next { right: 12px; }
+.deck-bar { width: 100%; display: flex; align-items: center; gap: 14px; padding: 10px 14px; background: #1a1318; color: var(--cream); }
+.deck-bar .num { font: 400 13px var(--font-head); letter-spacing: .08em; white-space: nowrap; }
+.deck-bar .track { flex: 1; height: 4px; border-radius: 2px; background: rgba(234,242,255,.16); overflow: hidden; }
+.deck-bar .track i { display: block; height: 100%; width: var(--w, 0%); background: linear-gradient(90deg, var(--terra), var(--gold)); transition: width .3s; }
+.deck-bar button { width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid rgba(241,213,161,.3); background: rgba(255,255,255,.06); color: var(--cream); cursor: pointer; display: grid; place-items: center; font-size: 15px; transition: background .2s; }
+.deck-bar button:hover { background: var(--terra); }
+.deck-thumbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); gap: 8px; width: 100%; max-height: 190px; overflow-y: auto; padding-top: 14px; border-top: 1px solid rgba(234,242,255,.14); margin-top: auto; scrollbar-width: thin; scrollbar-color: rgba(241,213,161,.35) transparent; }
+.deck-th { aspect-ratio: 16/9; padding: 0; overflow: hidden; border-radius: 8px; border: 1.5px solid rgba(241,213,161,.22); background: #000; cursor: pointer; opacity: .5; transition: opacity .2s, border-color .2s, transform .2s; }
+.deck-th canvas, .deck-th img { width: 100%; height: 100%; display: block; object-fit: cover; }
+.deck-th:hover { opacity: 1; transform: translateY(-2px); }
+.deck-th.on { opacity: 1; border-color: var(--terra); box-shadow: 0 0 0 3px rgba(199,122,75,.3); }
+.lb-media:fullscreen { border: 0; border-radius: 0; background: #000; }
+.lb-media:fullscreen .deck-stage { height: calc(100vh - 56px); aspect-ratio: auto; }
+.lb-media:fullscreen .deck-stage canvas, .lb-media:fullscreen .deck-stage > img { width: auto; height: 100%; max-width: 100%; }
+@media (max-width: 960px) { .lb-fig.deck { grid-template-columns: 1fr; } }
 
 /* ===== scroll effects ===== */
 /* 1. progress bar at the very top */
@@ -697,8 +732,8 @@ const TIMELINE = [
 const FRAME_IMAGE = "assets/images/educ-photo.png";   
 const WORK_CATS = [
   { name: "Projects",     span: 6, bg: "linear-gradient(135deg,#2b1d26,#5d352d)", color: "#fff",          ratio: "4/3" },
-  { name: "Poster",       span: 3, bg: "linear-gradient(135deg,#c77a4b,#dfb07f)", color: "#fff",          ratio: "3/4", notice: true },
-  { name: "Logo",         span: 3, bg: "linear-gradient(135deg,#f5efe9,#efe0d2)", color: "var(--ink)",    ratio: "1/1" }
+  { name: "Presentation", span: 3, bg: "linear-gradient(135deg,#f5efe9,#efe0d2)", color: "var(--ink)",    ratio: "16/10" },
+  { name: "Poster",       span: 3, bg: "linear-gradient(135deg,#c77a4b,#dfb07f)", color: "#fff",          ratio: "3/4", notice: true }
 ];
 const WORKS = [
   { cat: "Projects", title: "CommunityMonitoring System", desc: "The Community Monitoring System is a web and mobile-based application designed to organize, manage, and monitor community-related data such as barangays, government offices, schools, churches, and business establishments. It provides structured and accessible information to support coordination, decision-making, and operational activities across different platforms.", link: "https://github.com/nikopolistico/CommunityMonitoring", src: "assets/images/cms.png" },
@@ -719,10 +754,13 @@ const WORKS = [
   { cat: "Poster", title: "", sub: "", src: "" },
   { cat: "Poster", title: "", sub: "", src: "" },
   { cat: "Poster", title: "", sub: "", src: "" },
-  { cat: "Logo",   title: "", sub: "", src: "" },
-  { cat: "Logo",   title: "", sub: "", src: "" },
-  { cat: "Logo",   title: "", sub: "", src: "" },
-  { cat: "Logo",   title: "", sub: "", src: "" }
+  // Presentation: "src" = cover image shown in the grid. The slides play INSIDE the site, in one of 3 ways
+  // (the first one that is filled in is used):
+  //   slides: ["assets/inventora/1.png", "assets/inventora/2.png", ...]   your slides as pictures, next / next
+  //   link:   "assets/pdf/Inventora.pdf"                                  a PDF file, plays as a slideshow
+  //   embed:  "https://www.canva.com/design/XXXX/YYYY/view?embed"        Canva embed link (Share > More > Embed)
+  // "link" can also stay a Canva link: it becomes an "Open in Canva" button.
+  { cat: "Presentation", title: "Inventora", sub: "", desc: "Inventora is an inventory management system designed to track products, manage stock levels, and monitor user activities. It provides stock adjustments, audit tracking, and role-based access for better security and accountability. The system also generates detailed inventory records and activity logs, helping improve inventory accuracy, organization, and efficiency.", slides: ["assets/images/inventora/slide-01.png", "assets/images/inventora/slide-02.png", "assets/images/inventora/slide-03.png", "assets/images/inventora/slide-04.png", "assets/images/inventora/slide-05.png", "assets/images/inventora/slide-06.png", "assets/images/inventora/slide-07.png", "assets/images/inventora/slide-08.png", "assets/images/inventora/slide-09.png", "assets/images/inventora/slide-10.png", "assets/images/inventora/slide-11.png", "assets/images/inventora/slide-12.png", "assets/images/inventora/slide-13.png", "assets/images/inventora/slide-14.png"], embed: "", link: "", src: "assets/images/inventora/slide-01.png" }
 ];
 const POSTER_NOTICE = {
   label: "Before you view",
@@ -772,6 +810,7 @@ const SOC = {
   instagram: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>'
 };
 const isGit = u => /github\.com/i.test(u || "");
+const isPdf = u => /\.pdf($|[?#])/i.test(u || "");
 const nameParts = ME.name.split(" "); const initials = (nameParts[0][0] + nameParts[nameParts.length - 1][0]).toUpperCase();
 const firstName = ME.name.split(" ")[0];
 const show = id => { document.getElementById(id).hidden = false; };
@@ -825,25 +864,108 @@ if (SKILLS.length || TIMELINE.length) {
   $("#frame").innerHTML = FRAME_IMAGE ? `<img src="${esc(FRAME_IMAGE)}" alt="">` : `<svg viewBox="0 0 100 100" fill="none" stroke="#d99a68" stroke-width="1"><circle cx="50" cy="50" r="40"/><ellipse cx="50" cy="50" rx="40" ry="15"/><ellipse cx="50" cy="50" rx="15" ry="40"/><ellipse cx="50" cy="50" rx="28" ry="40"/><ellipse cx="50" cy="50" rx="40" ry="28"/><path d="M10 50h80M50 10v80"/></svg>`;
 }
 
+/* ---------- presentation slideshow: image slides, a PDF (PDF.js) or a Canva embed ---------- */
+const DECK = { kind: "", urls: [], doc: null, n: 0, i: 1, token: 0 };
+if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+const deckKind = it => (it.slides && it.slides.length) ? "images" : isPdf(it.link) ? "pdf" : it.embed ? "embed" : "";
+
+async function deckPaint(canvas, pageNo, width) {
+  const page = await DECK.doc.getPage(pageNo);
+  const base = page.getViewport({ scale: 1 });
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const vp = page.getViewport({ scale: (width * dpr) / base.width });
+  canvas.width = vp.width; canvas.height = vp.height;
+  await page.render({ canvasContext: canvas.getContext("2d"), viewport: vp }).promise;
+  return base.width / base.height;
+}
+const deckImgLoad = (img, src) => new Promise(res => { img.onload = () => res(img.naturalWidth / img.naturalHeight); img.onerror = () => res(16 / 9); img.src = src; });
+const deckFullscreen = () => { const m = $("#lbMedia"); if (!m) return; document.fullscreenElement ? document.exitFullscreen() : (m.requestFullscreen && m.requestFullscreen()); };
+
+async function deckShow(no) {
+  const stage = $("#deckStage"); if (!stage || !DECK.n) return;
+  DECK.i = Math.max(1, Math.min(DECK.n, no));
+  const my = ++DECK.token;
+  stage.classList.add("loading");
+  const ratio = DECK.kind === "pdf"
+    ? await deckPaint($("#deckCanvas"), DECK.i, Math.max(stage.clientWidth, 900))
+    : await deckImgLoad($("#deckImg"), DECK.urls[DECK.i - 1]);
+  if (my !== DECK.token || !$("#deckStage")) return;
+  stage.style.aspectRatio = ratio;
+  stage.classList.remove("loading");
+  $("#deckNum").textContent = `${String(DECK.i).padStart(2, "0")} / ${String(DECK.n).padStart(2, "0")}`;
+  $("#deckFill").style.setProperty("--w", (DECK.i / DECK.n) * 100 + "%");
+  $("#deckPrev").disabled = DECK.i === 1;
+  $("#deckNext").disabled = DECK.i === DECK.n;
+  document.querySelectorAll(".deck-th").forEach(t => t.classList.toggle("on", +t.dataset.p === DECK.i));
+  const on = document.querySelector(".deck-th.on"); if (on) on.scrollIntoView({ block: "nearest", behavior: "smooth" });
+}
+async function deckInit(it) {
+  const kind = deckKind(it);
+  DECK.kind = kind; DECK.n = 0; DECK.i = 1; DECK.doc = null; DECK.urls = [];
+  const full = $("#deckFull"); if (full) full.onclick = deckFullscreen;
+  if (kind === "embed") return;                        // the embedded slides have their own next / previous
+  try {
+    if (kind === "pdf") {
+      if (!window.pdfjsLib) throw new Error("PDF.js not loaded");
+      DECK.doc = await pdfjsLib.getDocument(it.link).promise;
+      DECK.n = DECK.doc.numPages;
+      const c = $("#deckCanvas"); if (c) c.hidden = false;
+    } else {
+      DECK.urls = it.slides; DECK.n = it.slides.length;
+      const im = $("#deckImg"); if (im) im.hidden = false;
+    }
+    const thumbs = $("#deckThumbs"); if (!thumbs) return;
+    thumbs.innerHTML = Array.from({ length: DECK.n }, (_, k) => `<button type="button" class="deck-th" data-p="${k + 1}" aria-label="Slide ${k + 1}">${kind === "pdf" ? "<canvas></canvas>" : `<img src="${esc(DECK.urls[k])}" alt="" loading="lazy">`}</button>`).join("");
+    thumbs.querySelectorAll(".deck-th").forEach(b => b.onclick = () => deckShow(+b.dataset.p));
+    $("#deckPrev").onclick = () => deckShow(DECK.i - 1);
+    $("#deckNext").onclick = () => deckShow(DECK.i + 1);
+    await deckShow(1);
+    if (kind === "pdf") {
+      for (let k = 1; k <= DECK.n; k++) {              // thumbnails, one by one in the background
+        const cv = document.querySelector(`#deckThumbs [data-p="${k}"] canvas`); if (!cv) break;
+        await deckPaint(cv, k, 160);
+      }
+    }
+  } catch (err) {
+    const s = $("#deckStage"), u = it.link || (it.slides && it.slides[0]) || "";
+    if (s) s.innerHTML = `<div class="deck-err">Could not load the slides.<br>Check that <b>${esc(u)}</b> exists and the site is running on a server.${it.link && !isPdf(it.link) ? "" : ""}</div>`;
+  }
+}
+
 /* ---------- lightbox: picture left, details right ---------- */
 const LB = { list: [], i: 0, trigger: null };
 function lbRender() {
   const it = LB.list[LB.i], n = LB.list.length;
   const pad = v => String(v).padStart(2, "0");
+  const kind = it.cat === "Presentation" ? deckKind(it) : "";   // images, pdf or embed
+  const isPresentation = !!kind;
   $("#lb").innerHTML = `
-    <figure class="lb-fig${it.link ? "" : " doc"}">
+    <figure class="lb-fig${isPresentation ? " deck" : it.link ? "" : " doc"}">
       <button class="lb-close" aria-label="Close">${ic("plus").replace("<svg", '<svg style="transform:rotate(45deg)"')}</button>
       <div class="lb-media" id="lbMedia">
-        ${it.src ? `<img src="${esc(it.src)}" alt="${esc(it.title)}"><span class="lb-hint">Tap to zoom</span>` : `<div class="lb-ph" style="background:${PH[LB.i % 4]}">${esc(it.title)}</div>`}
+        ${isPresentation ? `
+          ${kind === "embed" ? `
+            <div class="deck-stage embed" id="deckStage"><iframe src="${esc(it.embed)}" title="${esc(it.title)}" allow="fullscreen" allowfullscreen loading="lazy"></iframe></div>
+            <div class="deck-bar"><span class="num">Use the arrows inside the slides</span><div class="track"></div><button type="button" id="deckFull" aria-label="Fullscreen">⛶</button></div>`
+          : `
+            <div class="deck-stage loading" id="deckStage">
+              <canvas id="deckCanvas" hidden></canvas><img id="deckImg" alt="" hidden>
+              <div class="deck-load">Loading slides…</div>
+              <button type="button" class="deck-arrow prev" id="deckPrev" aria-label="Previous slide">‹</button>
+              <button type="button" class="deck-arrow next" id="deckNext" aria-label="Next slide">›</button>
+            </div>
+            <div class="deck-bar"><span class="num" id="deckNum">-- / --</span><div class="track"><i id="deckFill"></i></div><button type="button" id="deckFull" aria-label="Fullscreen">⛶</button></div>`}`
+        : it.src ? `<img src="${esc(it.src)}" alt="${esc(it.title)}"><span class="lb-hint">Tap to zoom</span>` : `<div class="lb-ph" style="background:${PH[LB.i % 4]}">${esc(it.title)}</div>`}
       </div>
       <figcaption class="lb-cap">
         ${it.cat ? `<span class="lb-tag">${ic("star")}${esc(it.cat)}</span>` : ""}
         <b>${esc(it.title)}</b>
         ${it.sub ? `<span class="lb-sub">${esc(it.sub)}</span>` : ""}
         ${it.desc ? `<p>${esc(it.desc)}</p>` : ""}
-        ${it.link ? `<a class="btn lb-gh" href="${esc(it.link)}" target="_blank" rel="noopener">${isGit(it.link) ? SOC.github : ""}<span>View on GitHub</span><span class="dot">${ic("arrow")}</span></a>` : ""}
+        ${it.link && (!isPresentation || kind === "embed" || kind === "images") ? `<a class="btn lb-gh" href="${esc(it.link)}" target="_blank" rel="noopener">${isGit(it.link) ? SOC.github : ""}<span>${isGit(it.link) ? "View on GitHub" : isPresentation ? "Open in Canva" : "View presentation"}</span><span class="dot">${ic("arrow")}</span></a>` : ""}
+        ${isPresentation && kind !== "embed" ? `<div class="deck-thumbs" id="deckThumbs"></div>` : ""}
         ${n > 1 && !it.link ? `<div class="lb-thumbs">${LB.list.map((t, k) => `<button type="button" class="lb-th${k === LB.i ? " on" : ""}" data-k="${k}" aria-label="${esc(t.title)}">${t.src ? `<img src="${esc(t.src)}" alt="">` : ""}</button>`).join("")}</div>` : ""}
-        ${n > 1 ? `<div class="lb-pager">
+        ${n > 1 && !isPresentation ? `<div class="lb-pager">
           <button class="lb-nav lb-prev" aria-label="Previous">‹</button>
           <div class="lb-prog"><span>${pad(LB.i + 1)} / ${pad(n)}</span><div class="lb-bar"><i style="--w:${((LB.i + 1) / n) * 100}%"></i></div></div>
           <button class="lb-nav lb-next" aria-label="Next">›</button>
@@ -852,9 +974,9 @@ function lbRender() {
     </figure>`;
   $("#lb .lb-close").onclick = lbClose;
   document.querySelectorAll("#lb .lb-th").forEach(b => b.onclick = () => { LB.i = +b.dataset.k; lbRender(); });
-  if (n > 1) { $("#lb .lb-prev").onclick = () => lbStep(-1); $("#lb .lb-next").onclick = () => lbStep(1); }
+  if (n > 1 && !isPresentation) { $("#lb .lb-prev").onclick = () => lbStep(-1); $("#lb .lb-next").onclick = () => lbStep(1); }
   const m = $("#lbMedia");
-  if (it.src) {
+  if (it.src && !isPresentation) {
     const img = m.querySelector("img");
     img.onclick = e => {
       const r = img.getBoundingClientRect();
@@ -863,6 +985,7 @@ function lbRender() {
     };
     m.onmousemove = e => { if (m.classList.contains("z")) { const r = m.getBoundingClientRect(); img.style.transformOrigin = `${((e.clientX - r.left) / r.width) * 100}% ${((e.clientY - r.top) / r.height) * 100}%`; } };
   }
+  if (isPresentation) deckInit(it);
 }
 function lbOpen(list, i, trigger) {
   LB.list = list; LB.i = i; LB.trigger = trigger;
@@ -870,14 +993,20 @@ function lbOpen(list, i, trigger) {
   setTimeout(() => $("#lb").classList.remove("fresh"), 350);
   $("#lb .lb-close").focus();
 }
-function lbClose() { $("#lb").classList.remove("on"); document.body.style.overflow = document.querySelector(".dg.on") ? "hidden" : ""; if (LB.trigger) LB.trigger.focus(); }
+function lbClose() {
+  if (document.fullscreenElement) document.exitFullscreen();
+  $("#lb").classList.remove("on"); $("#lb").innerHTML = "";
+  document.body.style.overflow = document.querySelector(".dg.on") ? "hidden" : "";
+  if (LB.trigger) LB.trigger.focus();
+}
 function lbStep(d) { LB.i = (LB.i + d + LB.list.length) % LB.list.length; lbRender(); }
 $("#lb").addEventListener("click", e => { if (e.target.id === "lb") lbClose(); });
 addEventListener("keydown", e => {
   if (!$("#lb").classList.contains("on")) return;
+  const deck = !!$("#deckStage") && DECK.n > 0;
   if (e.key === "Escape") lbClose();
-  if (e.key === "ArrowLeft" && LB.list.length > 1) lbStep(-1);
-  if (e.key === "ArrowRight" && LB.list.length > 1) lbStep(1);
+  if (e.key === "ArrowLeft")  deck ? deckShow(DECK.i - 1) : LB.list.length > 1 && lbStep(-1);
+  if (e.key === "ArrowRight") deck ? deckShow(DECK.i + 1) : LB.list.length > 1 && lbStep(1);
 });
 
 /* tile gallery builder (posters and logos) */
@@ -914,14 +1043,15 @@ const DG = { trigger: null };
 function dgOpen(c, trigger) {
   const items = WORKS.filter(d => d.cat === c.name);
   const isPj = c.name === "Projects";
+  const isPres = c.name === "Presentation";
   DG.trigger = trigger;
   $("#dg").innerHTML = `<div class="dg-panel">
     <div class="dg-head"><div class="dg-title"><h3 id="dgTitle">${esc(c.name)}</h3>${isPj && items.length ? `<span class="dg-count">${items.length} projects</span>` : ""}</div><button class="dg-close" aria-label="Close">${ic("plus").replace("<svg", '<svg style="transform:rotate(45deg)"')}</button></div>
-    ${items.length ? `<div class="${isPj ? "pj-grid" : "dg-grid"}" id="dgGrid"></div>` : `<p class="dg-empty">Coming soon.</p>`}
+    ${items.length ? `<div class="${isPj ? "pj-grid" : "dg-grid" + (isPres ? " two" : "")}" id="dgGrid"></div>` : `<p class="dg-empty">Coming soon.</p>`}
   </div>`;
   if (items.length) {
     if (isPj) projects($("#dgGrid"), items);
-    else tiles($("#dgGrid"), items.map((it, idx) => ({ it, idx })), c.ratio || "4/3", items, false);
+    else tiles($("#dgGrid"), items.map((it, idx) => ({ it, idx })), c.ratio || "4/3", items, isPres);
   }
   $("#dg .dg-close").onclick = dgClose;
   $("#dg").classList.add("on"); document.body.style.overflow = "hidden";
